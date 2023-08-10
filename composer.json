@@ -1,0 +1,16 @@
+{
+    "name": "alewea/ordo",
+    "autoload": {
+        "psr-4": {
+            "Ordo\\": "src/core/",
+            "app\\": "src/app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "AlessandroWea",
+            "email": "atribun14@gmail.com"
+        }
+    ],
+    "require": {}
+}
