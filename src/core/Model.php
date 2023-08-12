@@ -2,12 +2,122 @@
 
 namespace Ordo;
 
+use Exception;
 use Ordo\Db;
 
 class Model extends Db
 {
     static protected string $tableName = 'unknown_table';
     static protected array $enabledCols = [];
+    public array $validationErrors = [];
+
+    /**
+     * Holds validation rules for your columns
+     *
+     * @var array
+     * 
+     * Available options:
+     *  - NotBlank
+     *  - Blank
+     *  - NotNull
+     *  - Regex
+     *  - IsTrue
+     *  - IsFalse
+     *  - Numeric
+     *  - Email
+     *  - unique
+     *  - EqualTo
+     *  - NotEqualTo
+     *  - IdenticalTo
+     *  - NotIdenticalTo
+     *  - LessThan
+     *  - LessThanOrEqual
+     *  - GreaterThan
+     *  - GreaterThanOrEqual
+     *  - Range
+     *  - Positive
+     *  - PositiveOrZero
+     *  - Negative
+     *  - NegativeOrZero
+     *  - Choice
+     */
+    protected array $validationRules = [
+        'email' => [
+            'NotBlank',
+            'Email',
+        ],
+        'username' => [
+            'Alpha',
+            'Regex' => [
+                'pattern' => '[a-zA-Z0-9 ]+',
+                'match' => true,
+                'message' => 'Your username should only contain letters, numbers and spaces',
+            ],
+            'Length' => [
+                'min' => 2,
+                'max' => 50,
+                'minMessage' => 'Your first name must be at least {{ limit }} characters long',
+                'maxMessage' => 'Your first name cannot be longer than {{ limit }} characters',
+            ],
+            'Age' => [
+                'EqualTo' => [
+                    'value' => 18,
+                    'message' => '{{ value }} should be {{ compared_value }} and of type {{ compared_value_type }}',
+                ]
+            ]
+        ]
+    ];
+
+    public function validate($data)
+    {
+        $this->validationErrors = [];
+        
+        if(!empty($this->validationRules))
+        {
+            $columns = array_keys($this->validationRules);
+            foreach($columns as $column){
+                $value = $data[$column] ?? null;
+                $rules = array_keys($this->validationRules[$column]);
+                $stop  = false;
+                foreach($rules as $rule)
+                {
+                    if($stop) break;
+
+                    if(is_numeric($rule))
+                        $validatorClassName = 'Ordo\\Validators\\' .$this->validationRules[$column][$rule] . 'Validator';
+                    else
+                        $validatorClassName = 'Ordo\\Validators\\' .$rule . 'Validator';
+
+                    if(class_exists($validatorClassName))
+                    {
+                        if(is_array($this->validationRules[$column][$rule]))
+                        {
+                            $validatorObject = new $validatorClassName($this->validationRules[$column][$rule]);
+                        }
+                        else
+                        {
+                            $validatorObject = new $validatorClassName();
+                        }
+
+                        if(method_exists($validatorObject, 'run'))
+                        {
+                            if(!$validatorObject->run($value))
+                            {
+                                $this->validationErrors[$column] = $validatorObject->message;
+                                $stop = true;
+                            }
+                        }
+                        else
+                            throw new Exception('Method RUN is not implemented');
+                    }
+                    else
+                        dd('Class doesnot exists: ' . $validatorClassName);
+                }
+            }
+        }
+
+        return true;
+    }
 
     public function filter_cols(array $data) : array
     {
