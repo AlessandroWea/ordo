@@ -23,9 +23,6 @@ class Model extends Db
      *  - Regex
      *  - IsTrue
      *  - IsFalse
-     *  - Numeric
-     *  - Email
-     *  - unique
      *  - EqualTo
      *  - NotEqualTo
      *  - IdenticalTo
@@ -41,32 +38,10 @@ class Model extends Db
      *  - NegativeOrZero
      *  - Choice
      */
-    protected array $validationRules = [
-        'email' => [
-            'NotBlank',
-            'Email',
-        ],
-        'username' => [
-            'Alpha',
-            'Regex' => [
-                'pattern' => '[a-zA-Z0-9 ]+',
-                'match' => true,
-                'message' => 'Your username should only contain letters, numbers and spaces',
-            ],
-            'Length' => [
-                'min' => 2,
-                'max' => 50,
-                'minMessage' => 'Your first name must be at least {{ limit }} characters long',
-                'maxMessage' => 'Your first name cannot be longer than {{ limit }} characters',
-            ],
-            'Age' => [
-                'EqualTo' => [
-                    'value' => 18,
-                    'message' => '{{ value }} should be {{ compared_value }} and of type {{ compared_value_type }}',
-                ]
-            ]
-        ]
-    ];
+    protected array $validationRules = [];
+
+    public ?int $limit = 100;
+    public ?int $offset = 0;
 
     public function validate($data)
     {
@@ -133,7 +108,7 @@ class Model extends Db
 
     public function findAll()
     {
-        $sql = 'SELECT * FROM ' . static::$tableName;
+        $sql = 'SELECT * FROM ' . static::$tableName . ' limit ' . $this->limit . ' offset ' . $this->offset;
         $ret = $this->query($sql);
 
         return $ret->fetchAll();
@@ -149,6 +124,8 @@ class Model extends Db
         }
 
         $sql = trim($sql, ' AND');
+        $sql .= ' limit ' . $this->limit . ' offset ' . $this->offset;
+
         $ret = $this->query($sql, $arr);
         return $ret->fetchAll();
     }
@@ -163,6 +140,7 @@ class Model extends Db
         }
 
         $sql = trim($sql, ' AND');
+        $sql .= ' limit ' . $this->limit . ' offset ' . $this->offset;
         $ret = $this->query($sql, $arr);
         return $ret->fetch();
     }
