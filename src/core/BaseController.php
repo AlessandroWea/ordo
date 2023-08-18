@@ -10,6 +10,11 @@ class BaseController
     {
     }
 
+    public function runBefore()
+    {
+        return;
+    }
+
     public function render($path, $vars)
     {
         return View::render($path, $vars);

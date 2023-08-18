@@ -33,12 +33,18 @@ class App
             $reflectionObject = new \ReflectionClass('app\controllers\\' . $controller_name);
             $object = $reflectionObject->newInstanceArgs();
             $method = $reflectionObject->getMethod($method_name);
+            if(method_exists($object, 'runBefore'))
+            {
+                $beforeMethod = $reflectionObject->getMethod('runBefore');
+                $beforeMethod->invoke($object);
+            }
+
             if(!empty($parts[0])){
                 return $method->invokeArgs($object, $parts ?? []);
             }
             else
             {
-                return $method->invoke($object);   
+                return $method->invoke($object);
             }
         }
         catch(\ReflectionException $e)
@@ -46,6 +52,11 @@ class App
             echo '<h1>404 Not found</h1>';
             echo '<p>' . $e->getMessage() . '</p>';
             //show 404 error page
+            die;
+        }
+        catch(\Exception $e)
+        {
+            echo $e->getMessage();
             die;
         }
 
