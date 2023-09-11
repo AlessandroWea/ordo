@@ -2,8 +2,6 @@
 
 namespace Alewea\Malordo\Session;
 
-use Alewea\Malordo\Session\SessionStorageInterface;
-
 class Session
 {
     public function set($key, $value)

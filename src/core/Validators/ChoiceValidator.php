@@ -101,7 +101,7 @@ class ChoiceValidator extends BaseValidator
         if(is_array($value))
             throw new Exception('The value should be a scalar value');
 
-        $this->message = str_replace('{{ value }}, {{ choices }}', [$value, $str_choices], $this->message);
+        $this->message = str_replace(['{{ value }}', '{{ choices }}'], [$value, $str_choices], $this->message);
 
         return in_array($value, $this->choices);
     }
