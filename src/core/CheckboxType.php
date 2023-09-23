@@ -2,7 +2,7 @@
 
 namespace Ordo;
 
-class RadioType extends AbstractFieldType
+class CheckboxType extends AbstractFieldType
 {
     public function __construct(string $formName, string $name, array $options)
     {
@@ -12,8 +12,11 @@ class RadioType extends AbstractFieldType
     public function view($old_value) : string
     {
         return "
-            <label>$this->name</label>
-            <input type='radio' name='$this->formName[$this->name]' value='$old_value' class='$this->class'>
+            <label>$this->label</label>
+            <input type='checkbox'
+                name='$this->formName[$this->name]'
+                value='$old_value'
+                class='$this->class'>
         ";
     }
 }

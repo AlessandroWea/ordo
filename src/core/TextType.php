@@ -9,12 +9,15 @@ class TextType extends AbstractFieldType
         parent::__construct($formName, $name, $options);
     }
 
-    public function view() : string
+    public function view($old_value) : string
     {
-        $olt_value = $_POST[$this->name] ?? '';
         return "
-            <label>$this->name</label>
-            <input type='text' name='$this->formName[$this->name]' value='$olt_value' placeholder='$this->placeholder' class='$this->class'>
+            <label class='$this->labelClass'>$this->label</label>
+            <input type='text' 
+                    name='$this->formName[$this->name]' 
+                    value='$old_value' 
+                    placeholder='$this->placeholder' 
+                    class='$this->class'>
         "; 
     }
 
