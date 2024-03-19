@@ -3,7 +3,8 @@
     "autoload": {
         "psr-4": {
             "Ordo\\": "src/core/",
-            "app\\": "src/app/"
+            "app\\": "src/app/",
+            "tests\\": "src/tests/"
         }
     },
     "authors": [
