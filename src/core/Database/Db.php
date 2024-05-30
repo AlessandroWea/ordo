@@ -1,6 +1,6 @@
 <?php
 
-namespace Ordo;
+namespace Ordo\Database;
 
 use \PDO;
 

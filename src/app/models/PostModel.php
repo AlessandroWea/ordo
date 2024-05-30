@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use Ordo\Model;
+use Ordo\Database\Model;
 
 class PostModel extends Model
 {

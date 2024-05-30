@@ -77,6 +77,17 @@ class Test
 		}
 	}
 
+	// assertArrayEqual
+	public function assertArrayEqual($arr1, $arr2)
+	{
+
+	}
+	// assertObjectEqual
+	public function assertObjectEqual($obj1, $obj2)
+	{
+		
+	}
+
 	private function failure(string $message, array $values = [])
 	{
 		static::$messages[] = [

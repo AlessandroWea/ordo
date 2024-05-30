@@ -1,7 +1,7 @@
 <?php
 namespace tests\core;
 
-use Ordo\QueryBuilder;
+use Ordo\Database\QueryBuilder;
 
 use tests\Test;
 

@@ -2,12 +2,12 @@
 
 namespace app\forms;
 
-use Ordo\CheckboxType;
-use Ordo\FormBuilder;
-use Ordo\FormTypeInterface;
-use Ordo\NumberType;
-use Ordo\SelectType;
-use Ordo\TextType;
+use Ordo\Form\FieldType\CheckboxType;
+use Ordo\Form\FormBuilder;
+use Ordo\Form\FormTypeInterface;
+use Ordo\Form\FieldType\NumberType;
+use Ordo\Form\FieldType\SelectType;
+use Ordo\Form\FieldType\TextType;
 use Ordo\Validators\ChoiceValidator;
 use Ordo\Validators\EqualToValidator;
 

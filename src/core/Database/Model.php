@@ -1,9 +1,9 @@
 <?php
 
-namespace Ordo;
+namespace Ordo\Database;
 
 use Exception;
-use Ordo\Db;
+use Ordo\Database\Db;
 
 class Model extends Db
 {

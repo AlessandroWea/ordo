@@ -4,8 +4,8 @@ namespace app\controllers;
 
 use app\forms\AddProductFormType;
 use Ordo\BaseController;
-use Ordo\FormBuilder;
-use Ordo\QueryBuilder;
+use Ordo\Form\FormBuilder;
+use Ordo\Database\QueryBuilder;
 use Ordo\View;
 
 class MainController extends BaseController

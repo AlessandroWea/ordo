@@ -1,6 +1,6 @@
 <?php
 
-namespace Ordo;
+namespace Ordo\Form\FieldType;
 
 class RadioType extends AbstractFieldType
 {
