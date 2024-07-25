@@ -16,6 +16,14 @@ class Db
         return static::$db;
     }
 
+    public static function connectWithoutDb()
+    {
+        if(static::$db == null)
+            return static::$db = new PDO('mysql:host='. DB_HOST, DB_USER, DB_PWD);
+        
+        return static::$db;
+    }
+
     public function query($sql, $arr = [])
     {
         $db = Db::connect();
