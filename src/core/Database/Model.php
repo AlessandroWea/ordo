@@ -130,6 +130,22 @@ class Model extends Db
         return $ret->fetchAll();
     }
 
+    public function whereOr(array $arr = [])
+    {
+        $sql = 'SELECT * FROM ' . static::$tableName . ' where ';
+        $keys = array_keys($arr);
+        foreach($keys as $key)
+        {
+            $sql .= "$key = :$key OR ";
+        }
+
+        $sql = trim($sql, ' OR');
+        $sql .= ' limit ' . $this->limit . ' offset ' . $this->offset;
+
+        $ret = $this->query($sql, $arr);
+        return $ret->fetchAll();
+    }
+
     public function first(array $arr = [])
     {
         $sql = 'SELECT * FROM ' . static::$tableName . ' where ';
@@ -175,11 +191,75 @@ class Model extends Db
         return $ret;
     }
 
+    public function updateWhere($where, $arr)
+    {
+        //UPDATE users SET last_name = :last_name WHERE id = 4 ANt name='ss'
+        $cols = '';
+        foreach($arr as $key => $value)
+        {
+            $cols .= $key . '=:' . $key . ',';
+        }
+        $cols = trim($cols, ',');
+
+        $whereStr = '';
+        foreach($where as $key => $value)
+        {
+            $whereStr .= $key . '=:' . $key . ' AND ';
+        }
+        $whereStr = rtrim($whereStr, ' AND ');
+
+        $sql = 'UPDATE ' . static::$tableName . ' SET ' . $cols . ' WHERE ' . $whereStr;
+
+        $args = array_merge($arr, $where);
+        $ret = $this->query($sql, $args);
+
+        return $args;
+    }
+
     public function delete($id)
     {
         $sql = 'DELETE FROM ' . static::$tableName . ' WHERE id=:id';
         $ret = $this->query($sql, ['id'=>$id]);
 
         return $ret;
+    }
+
+    public function deleteBy($col, $val)
+    {
+        $sql = 'DELETE FROM ' . static::$tableName . " WHERE $col = :$col";
+        $ret = $this->query($sql, [$col=>$val]);
+
+        return $ret;
+    }
+
+    public function deleteWhere($arr)
+    {
+        $sql = 'DELETE FROM ' . static::$tableName . " WHERE ";
+        $keys = array_keys($arr);
+        foreach($keys as $key)
+        {
+            $sql .= " $key = :$key AND";
+        }
+
+        $sql = rtrim($sql, ' AND');
+        $ret = $this->query($sql, $arr);
+
+        return $ret->rowCount();
+    }
+
+    public function search($fields, $search)
+    {
+        $sql = 'SELECT * FROM ' . static::$tableName . ' WHERE ';
+        $search = '%' . $search . '%';
+        $str = '';
+        foreach($fields as $field)
+        {
+            $str .= $field . ' LIKE :search OR ';
+        }
+        $str = trim($str, ' OR ');
+        $sql .= $str;
+        $sql .= ' LIMIT ' . $this->limit . ' OFFSET ' . $this->offset;
+        $ret = $this->query($sql, ['search' => $search]);
+        return $ret->fetchAll();
     }
 }

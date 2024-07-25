@@ -6,8 +6,11 @@ class Form
 {
     public array $fields = [];
     public string $formName;
+    public string $method = 'post';
+    public static string $GET = 'get';
+    public static string $POST = 'post';
 
-    public function __construct($formName, $fields)
+    public function __construct(string $formName, array $fields)
     {
         $this->formName = $formName;
         $this->fields = $fields;
@@ -15,12 +18,12 @@ class Form
 
     public function __toString()
     {
-        $form = '<form>';
+        $form = $this->start();
         foreach($this->fields as $field)
         {
             $form .= $field;
         }
-        $form .= '</form>';
+        $form .= $this->end();
 
         return $form;
     }
@@ -54,7 +57,7 @@ class Form
 
     public function start()
     {
-        return '<form method="post">';
+        return "<form method='$this->method'>";
     }
 
     public function end()

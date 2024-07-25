@@ -10,6 +10,7 @@ class QueryBuilder
     // const TYPE_INSERT = 1;
     const TYPE_UPDATE = 2;
     const TYPE_DELETE = 3;
+    const TYPE_INSERT = 4;
 
     const TYPE_WHERE_NONE = -1;
     const TYPE_WHERE_AND = 0;
@@ -34,6 +35,16 @@ class QueryBuilder
     {
         $this->type = self::TYPE_SELECT;
         $this->selectColumns = $columns;
+
+        return $this;
+    }
+
+    public function insert(string $table, string $alias = '')
+    {
+        $this->type = self::TYPE_INSERT;
+
+        $this->updateData['table'] = $table;
+        $this->updateData['alias'] = $alias;
 
         return $this;
     }
@@ -94,14 +105,24 @@ class QueryBuilder
         return $this;
     }
 
-    public function set($parameter) : self
+    public function set(mixed $parameter) : self
     {
-        $this->updateData['columns'][] = $parameter;
+        if(is_array($parameter))
+        {
+            $this->updateData['columns'] = $parameter;
+        }
+        else
+        {
+            $this->updateData['columns'][] = $parameter;
+
+        }
         return $this;
     }
 
-    public function update(string $table, string $alias)
+    public function update(string $table, string $alias = '')
     {
+        $this->type = self::TYPE_UPDATE;
+
         $this->updateData['table'] = $table;
         $this->updateData['alias'] = $alias;
 
@@ -132,6 +153,9 @@ class QueryBuilder
             case self::TYPE_DELETE:
                 $this->buildDelete();
                 break;
+            case self::TYPE_INSERT:
+                $this->buildInsert();
+                break;
             default:
                 die('error');
         }
@@ -147,6 +171,14 @@ class QueryBuilder
 
         $this->query .= "LIMIT $this->limit OFFSET $this->offset";
         
+    }
+
+    private function buildInsert()
+    {
+        $keys = array_keys($this->updateData['columns']);
+        $cols = implode(',', $keys);
+        $vals = ':' . implode(',:', $keys);
+        $this->query = 'INSERT INTO ' . $this->updateData['table'] . ' (' . $cols . ') VALUES (' . $vals . ')';
     }
 
     private function buildJoins()
@@ -200,7 +232,7 @@ class QueryBuilder
             $this->query .= $column . ' = ' . ':' . $column . ', ';
         }
 
-        $this->query = rtrim($this->query, ',');
+        $this->query = rtrim($this->query, ', ');
 
         $this->buildWhere();
     }

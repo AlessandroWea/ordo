@@ -9,6 +9,10 @@
     .red {
         color: red;
     }
+
+    body {
+        background-color: #333;
+    }
 </style>
 <body>
     <?=$content;?>

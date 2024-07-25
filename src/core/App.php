@@ -2,15 +2,23 @@
 
 namespace Ordo;
 
+use Ordo\Container;
+
 class App
 {
     public string $default_controller = 'main';
     public string $default_method = 'index';
 
+    public Container $container;
+
+    public function __construct()
+    {
+        $this->container = new Container();
+    }
+
     public function run()
     {
         $uri = $_SERVER['REQUEST_URI'];
-
         $parts = explode('/',$uri);
         array_shift($parts);
 
@@ -33,6 +41,20 @@ class App
             $reflectionObject = new \ReflectionClass('app\controllers\\' . $controller_name);
             $object = $reflectionObject->newInstanceArgs();
             $method = $reflectionObject->getMethod($method_name);
+
+            $params = $method->getParameters();
+            $index = 0;
+            foreach($params as $param){
+                $type = $param->getType();
+                if(!$type)
+                {
+                    $parts[$index] = $parts[$index] ?? false;
+                    $index++;
+                    continue; 
+                }
+                $type = $type->getName();
+                $parts[$index++] = $this->container->get($type);
+            }
             if(method_exists($object, 'runBefore'))
             {
                 $beforeMethod = $reflectionObject->getMethod('runBefore');
@@ -44,7 +66,7 @@ class App
             }
             else
             {
-                return $method->invoke($object);
+                return $method->invokeArgs($object, $parts);
             }
         }
         catch(\ReflectionException $e)
