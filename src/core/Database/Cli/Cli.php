@@ -3,6 +3,7 @@
 namespace Ordo\Database\Cli;
 
 use Ordo\Database\Db;
+use Ordo\Database\Cli\TemplateManager;
 
 class Cli
 {
@@ -12,9 +13,12 @@ class Cli
 		'int','string'
 	];
 
+	private TemplateManager $templateManager;
+
 	public function __construct($argv)
 	{
 		$this->argv = $argv;
+		$this->templateManager = new TemplateManager();
 	}
 
 	public function run()
@@ -28,7 +32,7 @@ class Cli
 					$this->createDatabase();
 					break;
 				case 'make_entity':
-					$this->createEntity();
+					$this->createEntity('Usero');
 					break;
 				default:
 					// code...
@@ -48,7 +52,7 @@ class Cli
 		echo "Database '" . DB_NAME . "' was created!\n";
 	}
 
-	public function createEntity()
+	public function createEntity($className)
 	{
 		$db = Db::connect();
 		$stdin = fopen('php://stdin', 'r');
@@ -72,6 +76,12 @@ class Cli
 			var_dump($parameters);
 
 			echo "Adding a new parameter:" . "\n";
+		}
+
+		if(count($parameters) >= 0)
+		{
+			$this->templateManager->makeEntity($className, $parameters);
+			$this->templateManager->makeRepository($className);
 		}
 	}
 }
