@@ -5,10 +5,13 @@ namespace Ordo\Database\Cli;
 class TemplateManager
 {
 	private string $propertie_template =
-	"    #[ORM\Column]\n    private {type} $[name];\n\n";
+	"    #[ORM\Column]\n    private [type] $[name];\n\n";
 
 	private string $setter_template =
-	"    public function set{Name}\n    {\n        " . '$this->{name} = {name};' ."\n    }\n\n";
+	"    public function set[Name]($[name])\n    {\n        " . '$this->[name] = $[name];' ."\n    }\n\n";
+
+	private string $getter_template =
+	"    public function get[Name]()\n    {\n        " . 'return $this->[name];' . "\n    }\n\n";
 
 	private string $entity_template_path = ROOT . '/Cli/templates/entity.template.php';
 	private string $entity_output_path = ROOT . '/../../app/models/';
@@ -22,17 +25,17 @@ class TemplateManager
 		$template = file_get_contents($this->entity_template_path);
 
 		foreach($parameters as $parameter){
-			$prop_templates[] = str_replace(['{type}','[name]'], [$parameter['type'], $parameter['name']], $this->propertie_template);
+			$prop_templates[] = str_replace(['[type]','[name]'], [$parameter['type'], $parameter['name']], $this->propertie_template);
 
-			$setter_templates[] = str_replace(['{Name}', '{name}'], [ucfirst($parameter['name']), $parameter['name']], $this->setter_template);
-
+			$methods_templates[] = str_replace(['[Name]', '[name]'], [ucfirst($parameter['name']), $parameter['name']], $this->setter_template);
+			$methods_templates[] = str_replace(['[Name]', '[name]'], [ucfirst($parameter['name']), $parameter['name']], $this->getter_template);
 		}
 
 		$tableName = lcfirst($className) . 's';
 
 		$template = str_replace(
-			['{CLASS}','{TABLE}',	'{PROPERTIES}',				'{METHODS}'],
-			[$className, $tableName, implode('', $prop_templates), implode('', $setter_templates)],
+			['[CLASS]','[TABLE]',	'[PROPERTIES]',				'[METHODS]'],
+			[$className, $tableName, implode('', $prop_templates), implode('', $methods_templates)],
 			$template);
 
 		$outputPath = $this->entity_output_path . $className . '.php';

@@ -13,13 +13,17 @@ class User
     private int|null $id = null;
 
     #[ORM\Column]
-    private string $nickname;
+    private string $name;
 
 
-
-    public function setNickname
+    public function setName($name)
     {
-        $this->nickname = nickname;
+        $this->name = $name;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 
 

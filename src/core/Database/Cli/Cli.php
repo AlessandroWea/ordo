@@ -32,7 +32,7 @@ class Cli
 					$this->createDatabase();
 					break;
 				case 'make_entity':
-					$this->createEntity('Usero');
+					$this->createEntity('User');
 					break;
 				default:
 					// code...
