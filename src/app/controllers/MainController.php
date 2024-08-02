@@ -12,6 +12,7 @@ use Ordo\Form\Form;
 use app\models\User;
 use Ordo\Database\EntityManager;
 use app\repositories\UserRepository;
+use Ordo\Security\Attributes\IsGranted;
 
 class MainController extends BaseController
 {
@@ -34,16 +35,16 @@ class MainController extends BaseController
         $form = $fBuilder->build(AddProductFormType::class);
         $form->method = Form::$GET;
         $user = new User();
-        $user->setId(1);
-        $user->setName('A');
-        $user->setAge(1);
+        // $user->setId(1);
+        // $user->setName('A');
+        // $user->setAge(1);
         //1) make and save query to insert a new user into its table
-        $em->persist($user);
+        // $em->persist($user);
 
-        $user->setAge(2);
+        // $user->setAge(2);
 
         //2) execute all saved queries to insert
-        $em->flush();
+        // $em->flush();
 
         $em->getRepository(User::class);
 
