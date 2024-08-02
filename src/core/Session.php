@@ -1,6 +1,6 @@
 <?php
 
-namespace Alewea\Malordo\Session;
+namespace Ordo;
 
 class Session
 {
@@ -11,7 +11,10 @@ class Session
 
     public function get($key)
     {
-        return $_SESSION[$key];
+        if($this->has($key))
+            return $_SESSION[$key];
+        else
+            return null;
     }
 
     public function has($key)
