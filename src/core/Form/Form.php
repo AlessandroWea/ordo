@@ -2,7 +2,9 @@
 
 namespace Ordo\Form;
 
-class Form
+use Ordo\Form\FormInterface;
+
+class Form implements FormInterface
 {
     public array $fields = [];
     public string $formName;

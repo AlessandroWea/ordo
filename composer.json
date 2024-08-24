@@ -3,8 +3,7 @@
     "autoload": {
         "psr-4": {
             "Ordo\\": "src/core/",
-            "app\\": "src/app/",
-            "tests\\": "src/tests/"
+            "app\\": "src/app/"
         }
     },
     "authors": [
@@ -13,5 +12,11 @@
             "email": "atribun14@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "psr/container": "^2.0"
+    },
+    "require-dev": {
+        "tomasvotruba/lines": "^0.6.0",
+        "phpunit/phpunit": "^11"
+    }
 }

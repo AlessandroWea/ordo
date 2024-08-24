@@ -2,31 +2,63 @@
 
 namespace Ordo;
 
-class Container
+use Psr\Container\ContainerInterface;
+
+class Container implements ContainerInterface
 {
-    private array $objects = [
-    ];
-    private array $config = [];
+    static private Container|null $instance = null;
 
-    private array $excludedTypes = [
-        'string','array'
-    ];
+    private array $objects = [];
+    private array $entries = [];
 
-    function __construct()
+    private function __construct() {}
+
+    public static function instance()
     {
-        $this->objects['Ordo\Container'] = $this;
-        $this->config = require '../src/container_config.php';
-        dd($this->config);
+        if(static::$instance == null)
+            static::$instance = new Container();
+
+        return static::$instance;
     }
 
-    public function get(string $class)
+    public function get(string $id)
     {
-        return isset($this->objects[$class]) ? $this->objects[$class] : $this->prepare($class);
+        if($this->has($id))
+            return $this->objects[$id];
+
+        $entry = $id;
+        if($this->has_entries($id))
+        {
+            if(is_callable($this->entries[$id]))
+                return $this->entries[$id]($this);
+
+            $entry = $this->entries[$id];
+        }
+
+        return $this->prepare($entry);
+
+    }
+
+    public function has(string $id) : bool
+    {
+        return isset($this->objects[$id]);
+    }
+
+    public function has_entries(string $id) : bool
+    {
+        return isset($this->entries[$id]);
+    }
+
+    public function bind(string $id, callable|string $arg)
+    {
+        $this->entries[$id] = $arg;
     }
 
     public function prepare(string $class)
     {
         $classReflector = new \ReflectionClass($class);
+        if($classReflector->isInterface())
+            throw new \Exception('Cannot resolve dependencies for ' . $class);
 
         $constructReflector = $classReflector->getConstructor();
         if (empty($constructReflector)) {
@@ -41,22 +73,29 @@ class Container
             $this->objects[$class] = $obj;
             return $obj;
         }
+
+        if($this->has_entries($class))
+        {
+            $obj = $this->get($class);
+            $this->objects[$class] = $obj;
+            return $obj;
+        }
+
         $args = [];
         foreach ($constructArguments as $argument) {
-            $argumentType = $argument->getType();
+            if(!$argument->hasType())
+            {
+                throw new NotSpecifiedTypeContainerException('The type should be specified in ' . $class);
+            }
 
-            if(!$argumentType || in_array($argumentType->getName(), $this->excludedTypes))
+            $argumentType = $argument->getType();
+            if(!$argumentType instanceof \ReflectionNamedType || $argumentType->isBuiltin())
             {
-                $argName = $argument->getName();
-                $args[$argName] = $this->config['services'][$class]['args'][$argName] ?? false;
-                if($args[$argName] === false)
-                    throw new \Exception('Cannot resolve dependencies in ' . $class);
+                throw new \Exception('Cannot resolve dependencies in ' . $class);
             }
-            else
-            {
-                $argumentType = $argumentType->getName();
-                $args[$argument->getName()] = $this->get($argumentType);
-            }
+
+            $args[] = $this->get($argumentType->getName());
+            
         }
         $obj = new $class(...$args);
         $this->objects[$class] = $obj;
