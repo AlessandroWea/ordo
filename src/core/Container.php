@@ -56,6 +56,9 @@ class Container implements ContainerInterface
 
     public function prepare(string $class)
     {
+        if(!class_exists($class))
+            throw new \Exception('Container::prepare: Class ' . $class . ' doesnt exist');
+        
         $classReflector = new \ReflectionClass($class);
         if($classReflector->isInterface())
             throw new \Exception('Cannot resolve dependencies for ' . $class);

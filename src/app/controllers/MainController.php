@@ -2,24 +2,17 @@
 
 namespace app\controllers;
 
-use app\forms\AddProductFormType;
 use Ordo\BaseController;
 use Ordo\Form\FormBuilder;
-use Ordo\Database\QueryBuilder;
-use Ordo\View;
-use app\models\PostModel;
-use Ordo\Form\Form;
 use app\models\User;
-use Ordo\Database\EntityManager;
-use app\repositories\UserRepository;
-use Ordo\Security\Attributes\IsGranted;
-use Ordo\Form\FormInterface;
+use Ordo\Validators\Interfaces\ValidatorInterface;
+use Ordo\View\ViewInterface;
 
 class MainController extends BaseController
 {
     public function __construct(
-        private FormInterface $form,
-        private QueryBuilder $qBuilder
+        private ViewInterface $view,
+        private ValidatorInterface $validator
     )
     {
 
@@ -32,9 +25,20 @@ class MainController extends BaseController
 
     public function index($id = null, $str = 's')
     {
-        View::render('main/index', [
+        $user = new User();
+        $user->setName('ee');
+        $user->setAge('1');
 
-        ]
-    );
+        $errors = $this->validator->validate($user);
+        if(count($errors) > 0)
+        {
+            echo 'There are some errors! : ' . "</br>";
+            dd($errors);
+        }
+        else
+        {
+            echo 'There are no errors!';
+        }
+        $this->view->render('main/main.twig.html', []);
     }
 }

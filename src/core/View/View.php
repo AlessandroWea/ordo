@@ -1,27 +1,28 @@
 <?php
 
-namespace Ordo;
+namespace Ordo\View;
 
-class View
+use Ordo\View\ViewInterface;
+
+class View implements ViewInterface
 {
     static public string $layout = 'default.php';
     static public string $layoutFolder = APP_LAYOUT_FOULDER;
     static public string $viewsFolder = APP_VIEWS_FOLDER;
 
-    public static function render($path, $vars = [])
+    public function render($path, $vars = [])
     {
 		if($vars)
 			extract($vars);
 
-		$path = $path . '.view.php';
-		$fullpath = '../'. self::$viewsFolder . $path;
+		$fullpath = self::$viewsFolder . $path;
 		if(file_exists($fullpath))
 		{
 			ob_start();
 
 			require $fullpath;
 			$content = ob_get_clean();
-			require '../' . self::$layoutFolder . self::$layout;
+			require self::$layoutFolder . self::$layout;
             $ret = ob_get_clean();
 		}
 		else

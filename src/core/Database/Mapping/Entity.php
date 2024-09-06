@@ -1,6 +1,6 @@
 <?php
 
-namespace Ordo\Database;
+namespace Ordo\Database\Mapping;
 
 use Attribute;
 use Ordo\Database\Mapping\MappingAttribute;

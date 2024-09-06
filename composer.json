@@ -13,7 +13,8 @@
         }
     ],
     "require": {
-        "psr/container": "^2.0"
+        "psr/container": "^2.0",
+        "twig/twig": "^3.0"
     },
     "require-dev": {
         "tomasvotruba/lines": "^0.6.0",

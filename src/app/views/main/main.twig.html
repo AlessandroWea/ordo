@@ -1,0 +1,14 @@
+{% extends "layouts/default.html" %}
+
+{% block title %}Index{% endblock %}
+{% block head %}
+    {{ parent() }}
+    <style type="text/css">
+        .important { color: #828288; }
+    </style>
+{% endblock %}
+{% block content %}
+    <h1 class="important">
+        homepage
+    </h1>
+{% endblock %}
