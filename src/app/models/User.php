@@ -15,7 +15,7 @@ class User
     private int|null $id = null;
 
     #[ORM\Column]
-    #[Assert\NotNull(message : 'Name should not be null!')]
+    #[Assert\Blank(message : 'Name should be blank!')]
     #[Assert\Regex(pattern: '/[A-Z]+/')]
     private string|null $name = null;
 

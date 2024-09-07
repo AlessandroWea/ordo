@@ -14,7 +14,7 @@ class BlankValidator implements ConstraintValidatorInterface
         if(!$constraint instanceof Blank)
             throw new ConstraintValidatorException('Constraint for BlankValidator should be ' . Blank::class);
 
-        if($value == null && $value == '');
+        if($value == null || $value == '')
             return true;
 
         return false;
